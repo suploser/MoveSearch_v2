@@ -1,0 +1,168 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}just download{% endblock %}</title>
+    <script src="{% static 'jquery1.12.4.min.js' %}"></script>
+    <script src="http://cdn.amazeui.org/amazeui/2.7.2/js/amazeui.min.js"></script>
+    <link rel="stylesheet" href="http://cdn.amazeui.org/amazeui/2.7.2/css/amazeui.min.css">
+    <link rel="stylesheet" href="{% static 'index.css' %}">
+    {% block header_extend %}{% endblock %}
+</head>
+<body>
+    <div class="wrapper">
+        <div class="page">
+            <div class="am-g">
+                <div class="{% block search_row %}am-u-md-offset-4 am-u-md-4{% endblock %}">
+                    <div class="am-form-group am-form-icon am-form-feedback" style="{% block input_style %}margin-top: 15em{% endblock %}">
+                        <input type="text" class="am-form-field search-input" placeholder="请输入片名">
+                        <span id="search_btn" class="am-icon-search" 
+                        onclick="search()"></sapn>
+                    </div>  
+                </div>
+            </div>
+            <div class="am-u-md-offset-4 am-u-md-4">
+            <ul class="{% block suggest_list %}am-list am-list-border datalist{% endblock %}">
+            </ul>
+            </div>
+            {% block result %}{% endblock %}
+        </div>
+    </div>
+    <div class="footer">
+       <div class="am-g">
+           <div class="am-u-md-offset-4 am-u-md-4">
+               <ul class="contact">
+                   <li style="font-style: italic;font-size: 1.5em;"><b>just download</b></li>
+                   <li style="margin-top: 1em;"><a href="https://github.com/suploser" target="blank" class="am-icon-github am-icon-md" title="我的github"></a>&nbsp;&nbsp;&nbsp;<a href="https://weibo.com/u/2509233767" target="blank" class="am-icon-weibo am-icon-md" title="我的微博"></a>&nbsp;&nbsp;&nbsp;<a data-am-popover="{content: 'sup_loser@outlok.com'}" target="blank" class="am-icon-envelope-o am-icon-md" title="我的邮箱" style="cursor:pointer;"></a></li>
+               </ul>
+           </div>
+       </div>
+       <div class="am-u-md-offset-4 am-u-md-4 copy-right">
+           <span>Designed by Django 2.0 and <a href="http://amazeui.org">Amaze UI</a> © suploser</span>
+       </div>
+    </div>
+</body>
+
+<script>
+    $('input.search-input').val('');
+    var search_arr;
+    if(localStorage.search){
+        search_arr = localStorage.search.split(',');
+    }else{
+        search_arr = [];
+    }
+    if(search_arr.length>5){
+            search_arr.length=5;
+        }
+    String.prototype.format = function(){
+        var str = this;
+        for(var i=0; i<arguments.length; i++){
+            str = str.replace(new RegExp('\\{'+i+'\}', 'g'), arguments[i]);
+        }
+        return str;
+    }
+    // 输入框变化事件
+    $("input.search-input").bind("input propertychange", function(){
+        // 输入汉字会执行两次？？？？？
+        var search_word = $(this).val();
+        // 输入词过短不发送ajax请求
+           if(search_word.length<2){
+                $('.datalist').html('');
+                return;
+           }
+           $.ajax({
+                url: "{% url 'suggest' %}",
+                type: 'GET',
+                data: {'search_word':search_word},
+                cache: false,
+                success: function(data){
+                    console.log(data.suggest);
+                    // 每次获取数据后清空ul
+                    $('.datalist').html('');
+                    for(var i=0;i<data.suggest.length;i++)
+                    {
+                        if(data.suggest[i]!=''){
+                            $('.datalist').append(
+                                '<li><a class="am-text-truncate" href="search?search_word={0}">{0}</a></li>'.format(data.suggest[i])
+                                );
+                        }
+                        // 建议列表的底边线
+                        $('ul.datalist li:last-child').attr('style','border-bottom:1px solid #dedede');    
+                    }
+                },
+                error: function(xhr){
+                    console.log(xhr);
+                },
+           })
+        });
+    // 移除search中的重复值
+    function removeByValue(arr, value){
+        for(var i=0; i<arr.length; i++){
+            if(arr[i].trim() === value){
+                arr.splice(i,1);
+            }
+        }
+        // return arr;
+    }
+    function search(){
+        var search_word = $('input.search-input').val();
+        // 长度限制
+        if(search_word.length <1 || search_word.length > 20){
+            return ;
+        }
+        for(var i=0; i<search_arr.length; i++){
+            if(search_arr[i] === search_word){
+                removeByValue(search_arr, search_word);
+            }
+        }
+        // 点击搜索按钮后添加搜索记录至localStorge的search变量中
+        search_arr.unshift(search_word);
+        localStorage.search = search_arr;
+        url = "{% url 'search' %}?search_word="+search_word;
+        window.location.href = url;
+    }
+    // 输入框获得焦点后显示搜索记录
+    $('.search-input').focus(function(){
+        $('ul.datalist').html('');
+        $('#search_btn').fadeIn(300);
+        for(var i=0; i<search_arr.length; i++){
+            $('ul.datalist').append(
+                '<li><a class="am-text-truncate" ><span onclick="to(this)" style="float:left;cursor:pointer;">{0}</span><span class="am-close" onclick="remove_history(this)" title="清除记录" style="float:right;">&times;</span></a></li>'.format(search_arr[i])
+                );
+        }
+        $('ul.datalist li:last-child').attr('style','border-bottom:1px solid #dedede');
+    });
+    $('.search-input').blur(function(){
+        // 延迟失去焦点事件的执行
+        setTimeout(function(){
+            $('ul.datalist').html('');
+            $('#search_btn').fadeOut();
+        }, 500);
+    });
+    function to(obj){
+        search_word = $(obj).text().trim();
+        window.location.href = '{% url "search" %}?search_word='+search_word;
+    }
+    // 清除历史记录
+    function remove_history(obj){
+        var val = $(obj).prev('span').text().trim();
+        $(obj).parents('li').attr('style', 'display:none');
+        // 前一个li添加底边线
+        if($(obj).parents('li').prev('li').length==1){
+            $(obj).parents('li').prev('li').attr('style','border-bottom:1px solid #dedede');
+        }
+        removeByValue(search_arr, val);
+        localStorage.search = search_arr;
+        // e.stopPropagation();
+    }
+    // 点击事件
+    document.onkeydown = function(e){
+        var e = e || window.event ||argument.callee.caller.arguments[0];
+        if(e && e.keyCode ==13){
+            search();
+        }
+    }
+</script>
+{% block script_area %}{% endblock %}
+</html>
