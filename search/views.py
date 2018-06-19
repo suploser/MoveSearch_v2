@@ -9,9 +9,24 @@ import time
 p = Pinyin()
 redis_client = redis.StrictRedis(host='192.168.1.110')
 client = Elasticsearch(host='192.168.1.110')
+
+# 三位以逗号的科学计数法
+def sci_format(number):
+    res = ''
+    count = 0
+    for i in range(len(number)-1, -1, -1):
+        count += 1
+        if count == 4:
+            res = ',' + res
+            count = 1
+        res = number[i] + res
+    return res
+
 # Create your views here.
 def index(request):
-    return render(request,'index.html')
+    context = {}
+    context['movie_count'] = sci_format(redis_client.get('movie_count').decode('utf-8'))
+    return render(request,'index.html', context)
 
 # 搜索建议
 def suggest(request):
