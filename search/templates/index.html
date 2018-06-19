@@ -16,8 +16,9 @@
         <div class="page">
             <div class="am-g">
                 <div class="{% block search_row %}am-u-md-offset-4 am-u-md-4{% endblock %}">
-                    <div class="am-form-group am-form-icon am-form-feedback" style="{% block input_style %}margin-top: 15em{% endblock %}">
-                        <input type="text" class="am-form-field search-input" placeholder="请输入片名">
+                    <div class="am-form-group am-form-icon am-form-feedback" style="{% block input_style %}margin-top: 12em{% endblock %}">
+
+                        <input type="text" class="am-form-field search-input" placeholder="搜索本站收录的 {{  movie_count}} 个电影信息...">
                         <span id="search_btn" class="am-icon-search" 
                         onclick="search()"></sapn>
                     </div>  
