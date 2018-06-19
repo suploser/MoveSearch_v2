@@ -1,0 +1,66 @@
+.hide{
+    display: none;
+}
+body{
+    background-color: white;
+}
+.am-panel-hd>span{
+    font-size: 1.3em;
+}
+div.hot-word{
+    margin-left: 2em;
+}
+div.hot-word>span{
+    font-size: 1.25em;
+}
+div.am-u-md-3{
+    float: left!important;
+}
+.am-list a{
+    padding: 0.9px!important;
+}
+.hot-word li{
+    border:none;
+}
+.hot-word li a{
+    margin-left: 29px;
+}
+span.no-result{
+    font-size: 1.3em;
+}
+ul.result-info{
+    list-style: none;
+    display: inline-block;
+    margin-left: 0;
+    margin-bottom: 1em;
+    padding-left: 0; 
+}
+span.search-word{
+    color: red;
+}
+div.am-list-thumb{
+    padding: 0;
+}
+div.am-list-thumb:hover{
+    cursor: pointer;
+    box-shadow: 0 0 5px #000;
+    border-radius: 5px;
+}
+.front-img{
+    border-radius: 5px;
+}
+div.movie-info img{
+    float: left;
+    width: 150px;
+}
+ul.result-info-all{
+    text-align: left;
+}
+ul.download-url{
+    margin:0;
+    padding: 0;
+}
+ul.result-info-all li{
+    list-style: none;
+    margin-top:10px;
+}
