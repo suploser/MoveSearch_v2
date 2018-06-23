@@ -5,7 +5,7 @@
 爬虫数据存储<a href="https://github.com/medcl/elasticsearch-rtf">elasticsearch-rtf </a>
 
 <b>界面截图</b>
-![image](https://github.com/suploser/MoveSearch_v2/1.png)<br>
-![image](https://github.com/suploser/MoveSearch_v2/2.png)<br>
-![image](https://github.com/suploser/MoveSearch_v2/3.png)<br>
-![image](https://github.com/suploser/MoveSearch_v2/4.png)<br>
+![image](https://github.com/suploser/MoveSearch_v2/master/1.png)<br>
+![image](https://github.com/suploser/MoveSearch_v2/master/2.png)<br>
+![image](https://github.com/suploser/MoveSearch_v2/master/3.png)<br>
+![image](https://github.com/suploser/MoveSearch_v2/master/4.png)<br>
